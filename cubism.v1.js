@@ -29,7 +29,7 @@ cubism.context = function() {
       serverDelay = 5e3,
       clientDelay = 5e3,
       event = d3.dispatch("prepare", "beforechange", "change", "focus"),
-      scale = context.scale = d3.time.scale().range([0, size]),
+      scale = context.scale = d3.time.scale.utc().range([0, size]),
       timeout,
       focus;
 
