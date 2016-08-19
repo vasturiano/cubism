@@ -743,7 +743,8 @@ cubism_contextPrototype.horizon = function() {
       extent = null,
       title = cubism_identity,
       format = d3.format(".2s"),
-      colors = ["#08519c","#3182bd","#6baed6","#bdd7e7","#bae4b3","#74c476","#31a354","#006d2c"];
+      colors = ["#08519c","#3182bd","#6baed6","#bdd7e7","#bae4b3","#74c476","#31a354","#006d2c"],
+      nullColor = '#EEE';
 
   function horizon(selection) {
 
@@ -810,8 +811,8 @@ cubism_contextPrototype.horizon = function() {
         // clear for the new data
         canvas.clearRect(i0, 0, width - i0, height);
 
-        // record whether there are negative values to display
-        var negative;
+          // record whether there are negative or null values to display
+          var negative, nulls;
 
         // positive bands
         for (var j = 0; j < m; ++j) {
@@ -824,9 +825,26 @@ cubism_contextPrototype.horizon = function() {
 
           for (var i = i0, n = width, y1; i < n; ++i) {
             y1 = metric_.valueAt(i);
-            if (y1 <= 0) { negative = true; continue; }
+            if (y1 === null) {
+              nulls = true;
+              continue;
+            }
+            if (y1 <= 0) {
+              negative = true;
+              continue;
+            }
             if (y1 === undefined) continue;
             canvas.fillRect(i, y1 = scale(y1), 1, y0 - y1);
+          }
+        }
+
+        if (nulls) {
+          // add greyed out bands
+          canvas.fillStyle = nullColor;
+          for (var i = i0; i < width; ++i) {
+            if (metric_.valueAt(i) === null) {
+              canvas.fillRect(i, 0, 1, height);
+            }
           }
         }
 
